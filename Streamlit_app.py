@@ -14,7 +14,7 @@ st.title("Bank Marketing Prediction")
 st.subheader("By Md Mujahid Ahmed")
 
 # Load the dataset
-data = pd.read_csv(r"E:\DATA_SCIENCE\Desktop\Marketing_Campaigns_(phone_calls)_of_a_Portuguese_Banking_Institution\Marketing Campaigns (phone calls) of a Portuguese Banking Institution\Cleaned dataset of marketing.csv")
+data = pd.read_csv("Cleaned dataset of marketing.csv")
 
 # Title of the app
 st.title("Marketing Dataset Analysis")
