@@ -1,36 +1,67 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import RidgeClassifier
+import pickle
 
-st.title("Practicing")
+# Load pre-trained model and transformer
+model_pipeline = pickle.load(open(r"E:\streamlit\estimator1.pkl", "rb"))
 
-st.header("Practicing Session For WebDeployment")
-st.subheader("By Mohammed Mujahid Ahmed")
+st.title("Bank Marketing Prediction")
+st.subheader("By Md Mujahid Ahmed")
 
-name = st.text_input("Please Input your name Here:")
-st.write(f"Hello,{name} Welcome to the session")
+# Load the dataset
+data = pd.read_csv(r"E:\DATA_SCIENCE\Desktop\Marketing_Campaigns_(phone_calls)_of_a_Portuguese_Banking_Institution\Marketing Campaigns (phone calls) of a Portuguese Banking Institution\Cleaned dataset of marketing.csv")
 
-course = st.radio("Select Course",["Data Science","Data Analysis","Full Stack"])
-months = st.number_input("Select Months to complete these course:",min_value=3,max_value=9,step=3)
-st.write(f"Hello {name} you have opted for {course} for {months} months")
-ratings =st.slider(f"Choose ratings for the {course}",min_value=1.0,max_value=5.0,step=0.5)
-st.write(f"{name} you have Given {ratings} for {course} course")
+# Title of the app
+st.title("Marketing Dataset Analysis")
 
-if course == "Data Analysis":
-    st.write("You have 4 months to complete the course")
-elif course == "Data Science":
-    st.write("You have 9 months to complete the course")
+# Display the dataset
+if st.checkbox("Show raw data"):
+    st.subheader("Raw Data")
+    st.write(data)
 
-st.image(r"https://r1.ilikewallpaper.net/ipad-pro-wallpapers/download/91346/sea-sky-clouds-nature-sunset-4k-ipad-pro-wallpaper-ilikewallpaper_com_200.jpg")
+# Display basic statistics
+if st.checkbox("Show statistics"):
+    st.subheader("Statistics")
+    st.write(data.describe())
 
-st.sidebar.title("Select a page")
+# Create a sidebar for user inputs
+st.sidebar.header("User Input Features")
+# Define the inputs for prediction, ensuring all required columns are present
+age = st.sidebar.number_input("Age", min_value=18, max_value=100, value=32)
+balance = st.sidebar.number_input("Balance", min_value=-10000, max_value=100000, value=1000)
+housing = st.sidebar.selectbox("Housing", options=[0, 1])
+contact = st.sidebar.selectbox("Contact Type", options=['cellular', 'unknown', 'telephone'])
+day = st.sidebar.number_input("Day", min_value=1, max_value=31, value=20)
+duration = st.sidebar.number_input("Duration (minutes)", min_value=0.0, max_value=60.0, value=2.0, step=0.01)
+campaign = st.sidebar.number_input("Campaign", min_value=1, max_value=100, value=1)
+previous = st.sidebar.number_input("Previous Contacts", min_value=0, max_value=50, value=0)
+poutcome = st.sidebar.selectbox("Previous Outcome", options=['unknown', 'failure', 'other', 'success'])
+balance_housing = st.sidebar.number_input("Balance Housing", min_value=-10000, max_value=100000, value=0)
 
-st.line_chart(data=[1,3,4,2,5,6,9,8])
+# Collect inputs in the correct format for prediction
+data = pd.DataFrame({
+    'age': [age],
+    'balance': [balance],
+    'housing': [housing],
+    'contact': [contact],
+    'day': [day],
+    'duration': [duration],
+    'campaign': [campaign],
+    'previous': [previous],
+    'poutcome': [poutcome],
+    'balance_housing': [balance_housing]
+})
 
-st.code("a = input('Enter a name')")
-
-st.latex(r'''
-         ar + ar ^ 2 + ar ^ 3 + \cdots + ar ^ n-1 + ar ^ n = \sum_{k=0}^{n-1} ar^k = a \left(\frac{1-r^{n}}{1-r}\right) )
-         ''')
-
-
-
+if st.button("Predict"):
+    try:
+        # Make prediction using the loaded model pipeline
+        prediction = model_pipeline.predict(data)
+        st.write("Prediction:", prediction[0])  # Display prediction directly
+    except Exception as e:
+        st.error(f"Error during prediction: {e}")
 
