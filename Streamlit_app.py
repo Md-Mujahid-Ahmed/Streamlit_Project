@@ -8,7 +8,7 @@ from sklearn.linear_model import RidgeClassifier
 import pickle
 
 # Load pre-trained model and transformer
-model_pipeline = pickle.load(open(r"E:\streamlit\estimator1.pkl", "rb"))
+model_pipeline = pickle.load(open("estimator1.pkl", "rb"))
 
 st.title("Bank Marketing Prediction")
 st.subheader("By Md Mujahid Ahmed")
